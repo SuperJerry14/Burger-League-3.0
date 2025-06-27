@@ -1,0 +1,15 @@
+<svg width="50" height="50" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+  <!-- Captain America inspired avatar -->
+  <circle cx="25" cy="25" r="24" fill="#4682b4" stroke="#191970" stroke-width="2"/>
+  <!-- Shield design -->
+  <circle cx="25" cy="25" r="20" fill="#dc143c"/>
+  <circle cx="25" cy="25" r="15" fill="#ffffff"/>
+  <circle cx="25" cy="25" r="10" fill="#dc143c"/>
+  <circle cx="25" cy="25" r="5" fill="#4682b4"/>
+  <!-- Star -->
+  <polygon points="25,20 26.5,23.5 30,23.5 27.25,25.75 28.5,29.5 25,27 21.5,29.5 22.75,25.75 20,23.5 23.5,23.5" fill="#ffffff"/>
+  <!-- Helmet straps -->
+  <path d="M15 20 Q25 15 35 20" stroke="#2f4f4f" stroke-width="2" fill="none"/>
+  <circle cx="15" cy="20" r="1.5" fill="#c0c0c0"/>
+  <circle cx="35" cy="20" r="1.5" fill="#c0c0c0"/>
+</svg>

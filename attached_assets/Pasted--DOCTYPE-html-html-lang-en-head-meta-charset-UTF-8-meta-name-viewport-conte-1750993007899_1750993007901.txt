@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Burger Justice League (Beta)</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #1a1a1a;
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+    }
+    .hero {
+      border: 2px solid #444;
+      padding: 10px;
+      margin: 10px;
+      border-radius: 10px;
+    }
+    .burger {
+      font-size: 24px;
+      margin: 20px 0;
+    }
+    button {
+      padding: 10px;
+      margin: 5px;
+      background: #ff8800;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      font-weight: bold;
+    }
+    .achievement {
+      background: #222;
+      border: 2px solid lime;
+      padding: 10px;
+      margin: 10px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>Burger Justice League (Beta)</h1>
+  <p class="burger">🍔 Burgers: <span id="burgers">0</span></p>
+  <button onclick="manualClick()">Grill a Burger</button>
+
+  <div id="heroes"></div>
+  <div id="achievements"></div>
+
+  <script>
+    let burgers = 0;
+    let bps = 0;
+    const burgerDisplay = document.getElementById("burgers");
+    const heroesDiv = document.getElementById("heroes");
+    const achievementsDiv = document.getElementById("achievements");
+
+    const heroes = [
+      { name: "Arachnid Lad", cost: 10, bps: 0.1 },
+      { name: "Thore", cost: 50, bps: 0.5 },
+      { name: "Optimus Subprime", cost: 200, bps: 1 },
+      { name: "Compy Comrade", cost: 500, bps: 2 },
+      { name: "Irony Man", cost: 1000, bps: 5 }
+    ];
+
+    const owned = new Array(heroes.length).fill(0);
+    const achievements = [
+      { trigger: 100, msg: "100 Burgers! You’re mildly greasy." },
+      { trigger: 500, msg: "500 Burgers! That’s a lotta meat." },
+      { trigger: 1000, msg: "1000 Burgers! You’re full of justice." }
+    ];
+
+    function manualClick() {
+      burgers++;
+      updateDisplay();
+    }
+
+    function buyHero(i) {
+      if (burgers >= heroes[i].cost) {
+        burgers -= heroes[i].cost;
+        owned[i]++;
+        bps += heroes[i].bps;
+        updateDisplay();
+      }
+    }
+
+    function updateDisplay() {
+      burgerDisplay.textContent = Math.floor(burgers);
+
+      // Check achievements
+      achievements.forEach((a, idx) => {
+        if (burgers >= a.trigger && !document.getElementById("achieve-" + idx)) {
+          const box = document.createElement("div");
+          box.className = "achievement";
+          box.id = "achieve-" + idx;
+          box.textContent = a.msg;
+          achievementsDiv.appendChild(box);
+          box.style.display = "block";
+        }
+      });
+    }
+
+    function init() {
+      heroes.forEach((hero, i) => {
+        const div = document.createElement("div");
+        div.className = "hero";
+        div.innerHTML = `
+          <h3>${hero.name}</h3>
+          <p>Cost: ${hero.cost} burgers</p>
+          <p>Generates: ${hero.bps} BPS</p>
+          <button onclick="buyHero(${i})">Recruit</button>
+        `;
+        heroesDiv.appendChild(div);
+      });
+    }
+
+    init();
+    setInterval(() => {
+      burgers += bps / 10;
+      updateDisplay();
+    }, 100);
+  </script>
+</body>
+</html>

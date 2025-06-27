@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Burger Justice League</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; background: #f2efe3; }
+    #burger { font-size: 32px; padding: 20px; background: #ffc107; border: none; border-radius: 10px; cursor: pointer; }
+    .hero, .achievement { margin: 10px; display: block; }
+    .popup { position: fixed; top: 10px; right: 10px; background: #333; color: #fff; padding: 10px; border-radius: 5px; display: none; }
+    .hero-box { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 10px; }
+    .hero-box img { width: 50px; height: 50px; border-radius: 10px; }
+    #endgame { font-size: 20px; margin-top: 20px; color: darkred; display: none; }
+  </style>
+</head>
+<body>
+  <h1>🍔 Burger Justice League</h1>
+  <h2>Burgers: <span id="burgers">0</span></h2>
+  <button id="burger">Click for Burger</button>
+  <div id="heroes"></div>
+  <h3>Achievements</h3>
+  <div id="achievements"></div>
+  <div class="popup" id="popup"></div>
+  <div id="endgame"></div>
+
+  <script>
+    let burgers = 0;
+    let bps = 0;
+    const burgerDisplay = document.getElementById("burgers");
+    const heroesDiv = document.getElementById("heroes");
+    const achievementsDiv = document.getElementById("achievements");
+    const popup = document.getElementById("popup");
+    const endgameDiv = document.getElementById("endgame");
+
+    const heroes = [
+      { name: "Arachnid Lad", cost: 50, bps: 0.2, count: 0, img: "arachnid_lad.png" },
+      { name: "Thore", cost: 150, bps: 0.7, count: 0, img: "thore.png" },
+      { name: "Optimus Subprime", cost: 400, bps: 1.5, count: 0, img: "optimus_subprime.png" },
+      { name: "Compy Comrade", cost: 1000, bps: 3, count: 0, img: "compy_comrade.png" },
+      { name: "Irony Man", cost: 2000, bps: 6, count: 0, img: "irony_man.png" }
+    ];
+
+    const achievements = [
+      { name: "First Burger", condition: () => burgers >= 1, unlocked: false },
+      { name: "Click Maniac", condition: () => burgers >= 100, unlocked: false },
+      { name: "Buy Arachnid Lad", condition: () => heroes[0].count >= 1, unlocked: false },
+      { name: "Buy All Heroes Once", condition: () => heroes.every(h => h.count >= 1), unlocked: false },
+      { name: "Burger Tycoon", condition: () => burgers >= 10000, unlocked: false },
+      { name: "Hire Irony Man", condition: () => heroes[4].count >= 1, unlocked: false },
+      { name: "Assemble the League", condition: () => heroes.every(h => h.count >= 5), unlocked: false },
+      { name: "Burger Billionaire", condition: () => burgers >= 100000, unlocked: false },
+      { name: "Derp Collector", condition: () => totalHeroes() >= 25, unlocked: false },
+      { name: "Efficiency God", condition: () => bps >= 50, unlocked: false }
+    ];
+
+    const hiddenAchievements = [
+      { name: "???", realName: "Cape Batguy Who?", condition: () => burgers >= 420, unlocked: false },
+      { name: "???", realName: "Burger Overload", condition: () => burgers >= 6969, unlocked: false },
+      { name: "???", realName: "Too Many Heroes", condition: () => totalHeroes() >= 50, unlocked: false },
+      { name: "???", realName: "You Actually Played This Long?", condition: () => burgers >= 99999, unlocked: false },
+      { name: "???", realName: "Final Roast", condition: () => burgers >= 1000000 && heroes[4].count >= 10, unlocked: false }
+    ];
+
+    function totalHeroes() {
+      return heroes.reduce((sum, h) => sum + h.count, 0);
+    }
+
+    function showPopup(message) {
+      popup.innerText = message;
+      popup.style.display = 'block';
+      setTimeout(() => popup.style.display = 'none', 3000);
+    }
+
+    function checkAchievements() {
+      achievements.forEach((ach) => {
+        if (!ach.unlocked && ach.condition()) {
+          ach.unlocked = true;
+          showPopup("Achievement Unlocked: " + ach.name);
+          const item = document.createElement("div");
+          item.className = "achievement";
+          item.textContent = "🏆 " + ach.name;
+          achievementsDiv.appendChild(item);
+        }
+      });
+
+      hiddenAchievements.forEach((ach) => {
+        if (!ach.unlocked && ach.condition()) {
+          ach.unlocked = true;
+          showPopup("Secret Achievement Unlocked: " + ach.realName);
+          const item = document.createElement("div");
+          item.className = "achievement";
+          item.textContent = "🎉 " + ach.realName;
+          achievementsDiv.appendChild(item);
+        }
+      });
+
+      if (hiddenAchievements[4].unlocked && !endgameDiv.innerHTML) {
+        endgameDiv.style.display = 'block';
+        endgameDiv.innerHTML = "🎝 Irony Man approaches That Guy and says: 'Nice gauntlet, bro. You compensatin’ for something?'";
+      }
+    }
+
+    function updateDisplay() {
+      burgerDisplay.textContent = Math.floor(burgers);
+      heroesDiv.innerHTML = "";
+      heroes.forEach((hero) => {
+        const box = document.createElement("div");
+        box.className = "hero-box";
+
+        const img = document.createElement("img");
+        img.src = hero.img;
+        img.alt = hero.name;
+
+        const btn = document.createElement("button");
+        btn.className = "hero";
+        btn.textContent = `${hero.name} (${hero.count}) - Cost: ${Math.floor(hero.cost)} - BPS: ${hero.bps}`;
+        btn.onclick = () => {
+          if (burgers >= hero.cost) {
+            burgers -= hero.cost;
+            hero.count++;
+            bps += hero.bps;
+            hero.cost *= 1.15;
+            updateDisplay();
+            checkAchievements();
+          }
+        };
+
+        box.appendChild(img);
+        box.appendChild(btn);
+        heroesDiv.appendChild(box);
+      });
+    }
+
+    document.getElementById("burger").onclick = () => {
+      burgers += 1;
+      updateDisplay();
+      checkAchievements();
+    };
+
+    setInterval(() => {
+      burgers += bps / 10;
+      updateDisplay();
+      checkAchievements();
+    }, 100);
+
+    updateDisplay();
+  </script>
+</body>
+</html>
